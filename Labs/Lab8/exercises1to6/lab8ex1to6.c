@@ -37,8 +37,11 @@ int LargerRectangle(Rectangle r1, Rectangle r2)
 int SumBetween(int low, int high)
 {	
 	int sum = 0;
-	for (low; low <= high; low++) {
-		sum += low;
+	// note shouldn't put low directly in
+	// code runner hates it
+	for (int i = low; i <= high; i++)
+	{
+		sum = sum + i;
 	} 
 	return sum;
 }
@@ -52,7 +55,15 @@ int LargestRoom(int carpetArea)
 
 int MiddleOfThree(int a, int b, int c)
 {
-	return 0;
+	if ((c <= b && b <= a) || (a <= b && b <= c))
+	{
+		return b;
+	}
+	else if ((c <= a && a <= b) || (b <= a && a <= c)) {
+		return a;
+	} else {
+		return c;
+	}
 }
 
 /* Here is the main function for the program.  You should write
@@ -73,17 +84,16 @@ int main(void)
 
 	// test ex3
 	// Rectangle r1, r2;
-	// r1.width = 20;
-	// r1.height = 10;
-	// r2.width = 15;
-	// r2.height = 15;
+	// r1.width = 5;
+	// r1.height = 21;
+	// r2.width = 10;
+	// r2.height = 10;
 
 	// int result = LargerRectangle(r1,r2);
 	// printf("Result = %d", result);
 
 	// test ex4
-	// int result = SumBetween(3, 5);
-	// printf("%d", result);
+	printf("%d", SumBetween(-10, 0));
 
 	// test ex5
 	// printf("%d\n", LargestRoom(0));
@@ -92,8 +102,8 @@ int main(void)
 	// printf("%d\n", LargestRoom(101));
 
 	// test ex6
-	int result = MiddleOfThree(3, 5, 4);
-	printf("%d", result);
+	// int result = MiddleOfThree(5, 5, 10);
+	// printf("%d", result);
 
 	return 0;
 }

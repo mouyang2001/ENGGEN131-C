@@ -7,10 +7,23 @@
 int main(void)
 {
     int bits[MAX_SIZE];
-    int numBits;
+    int numBits = 0;
 
+    int input;
+    printf("Enter a number:\n");
+    scanf("%d", &input);
+    while (input > 0)
+    {   
+        bits[numBits] = input % 2;
+        numBits++;
 
+        input = input / 2;
+    }
 
+    for (int i = numBits-1; i >= 0; i--)
+    {
+        printf("%d", bits[i]);
+    }
 
     return 0;
 }
