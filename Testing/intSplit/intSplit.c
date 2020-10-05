@@ -4,11 +4,6 @@
 
 int main(void)
 {
-    uint8_t a = 42;
-    uint8_t b = 19;
-    uint8_t out = a;
-    int c = 42;
-
     int num = 14;
 
     while (num > 0) //do till num greater than  0
@@ -21,4 +16,3 @@ int main(void)
 
     return 0;
 }
-
