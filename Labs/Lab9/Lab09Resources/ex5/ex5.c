@@ -27,8 +27,7 @@ int main(void)
 		{1, 2, 3, 4},
 		{5, 6, 7, 8},
 		{9, 10, 11, 12},
-		{-1, 13, 14, 15}
-	};
+		{-1, 13, 14, 15}};
 	int row, col;
 
 	// Play the game until the board is in the complete position
@@ -49,12 +48,44 @@ YOU NEED TO COMPLETE THESE TWO FUNCTIONS ONLY
 ************************************************************/
 void FindTile(int board[NUM_ROWS][NUM_COLS], int tile, int *rowPos, int *colPos)
 {
-
+	for (int row = 0; row < NUM_ROWS; row++) {
+		for (int col = 0; col < NUM_COLS; col++) {
+			if (board[row][col] == tile) {
+				*rowPos = row;
+				*colPos = col;
+			}
+		}
+	}
 }
 
 void MakeMove(int board[NUM_ROWS][NUM_COLS], int tile)
 {
-
+	for (int row = 0; row < NUM_ROWS; row++) {
+		for (int col = 0; col < NUM_COLS; col++) {
+			if (board[row][col] == -1) {
+				if (board[row + 1][col] == tile && row + 1 < NUM_ROWS) {
+					board[row][col] = tile;
+					board[row + 1][col] = -1;
+					return;
+				}
+				else if (board[row - 1][col] == tile && row - 1 > -1) {
+					board[row][col] = tile;
+					board[row - 1][col] = -1;
+					return;
+				}
+				if (board[row][col + 1] == tile && col + 1 < NUM_COLS) {
+					board[row][col] = tile;
+					board[row][col + 1] = -1;
+					return;
+				}
+				else if (board[row][col - 1] == tile && col - 1 > -1) {
+					board[row][col] = tile;
+					board[row][col - 1] = -1;
+					return;
+				}
+			}
+		}
+	}
 }
 /************************************************************
 YOU NEED TO COMPLETE THESE TWO FUNCTIONS ONLY

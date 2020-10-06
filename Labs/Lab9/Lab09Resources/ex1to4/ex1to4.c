@@ -33,18 +33,16 @@ int LastIndexOf(int search, int values[], int numValues)
 
 int SignBalance(int values[])
 {
-	int i = 0;
 	int positives = 0;
 	int negatives = 0;
-	int length = sizeof(values[0]) / sizeof(int);
-	for (int i = 0; i < length; i++) {
+	int i = 0;
+	while (values[i] != 0) {
 		if (values[i] > 0) {
 			positives++;
 		} else if (values[i] < 0) {
 			negatives++;
-		} else if (values[i] == 0) {
-			break;
 		}
+		i++;
 	}
 
 	if (positives > negatives) {
@@ -58,10 +56,12 @@ int SignBalance(int values[])
 
 void ReverseArray(int *values, int length)
 {
-	int a, b;
+	int temp;
 	int i, j;
-	for (i = 0, j = length-1; j >= 0; i++, j--) {
-		//FUCK YOU!
+	for (i = 0, j = length-1; i < j; i++, j--) {
+		temp = values[i];
+		values[i] = values[j];
+		values[j] = temp;
 	}
 }
 
@@ -73,22 +73,23 @@ int main(void)
 	printf("Hi there!  Nice to see you.\n");
 	printf("Here is a test program for Lab 9.\n");
 
-	int values[10] = {-1,-4,-2,-7,-1,-5,2,7,1,9};
+	int values[5] = {1, 2, 0, 2, 1};
 
 	//test ex1
-	printf("%d\n", CountOnes(values, 10));
+	printf("Count 1s: %d\n", CountOnes(values, 10));
 
 	//test ex2
-	printf("%d\n", LastIndexOf(1, values, 10));
+	printf("Last Index of: %d\n", LastIndexOf(2, values, 5));
 
 	//test ex3
-	printf("%d\n", SignBalance(values));
+
+	int vals[7] = {-1,-1,1,1,1,-1, 0};
+	printf("Sign balance: %d\n", SignBalance(vals));
 
 	//test ex4
-	int values1[7] = {1,2,3,4,5,6,7};
-	ReverseArray(values1, 7);
-	for (int i = 0; i < 7; i++) {
-		printf("%d ", values1[i]);
+	ReverseArray(vals, 10);
+	for (int i = 0; i < 10; i++) {
+		printf("%d ", vals[i]);
 	}
 
 	return 0;
