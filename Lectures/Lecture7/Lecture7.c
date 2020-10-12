@@ -1,27 +1,26 @@
 #include <stdio.h>
 #include <string.h>
 
-int Test(int *values, int length)
-{
-    int i;
-    int test = values[0];
-    for (i = 1; i < length; i++)
-    {
-        if (test < values[i])
-        {
-            test = values[i];
-        }
-    }
-    return test;
-}
+#include <stdlib.h>
+#include <time.h>
+
+// Tuesday 13/10/2020
 
 int main(void)
 {
-    int numbers[5] = {1, 2, 3, 4, 5};
-    for (int i = 4; i >= 0; i++)
-    {
-        printf("%d\n", numbers[i]);
-    }
+    int r;
+
+    // set starting random number using clock time
+    srand((unsigned int) time(NULL));
+
+    // random in range a to b
+    int a = 10;
+    int b = 20;
+    int random = (rand() % (b-a+1)) + a;
+
+    r = rand();
+    printf("%d\n", r);
+    printf("RAND_MAX: %d", RAND_MAX);
 
     return 0;
 }
