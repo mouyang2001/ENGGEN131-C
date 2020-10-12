@@ -1,19 +1,17 @@
 #include <stdio.h>
 
-int Foo(int a)
-{
-    a = a + a;
-    printf("Foo = %d, ", a);
-    return a;
-}
-
 int main(void)
 {
-    int a = 10;
 
-    a = Foo(a);
+    int x = 3;
+    int y = 27;
 
-    printf("main = %d ", a);
+    for (int i = 1; x < y; i++)
+    {
+        x = i * x;
+    }
+
+    printf("The new value of 'x' is: %d", x);
 
     return 0;
 }
