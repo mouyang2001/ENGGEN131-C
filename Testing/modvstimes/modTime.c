@@ -3,7 +3,7 @@
 int main(void) 
 {
     int i;
-    i = 4 % 2 * 10;
+    i = 4%5;
     // multiplication > mod
     printf("%d", i);
     return 0;
