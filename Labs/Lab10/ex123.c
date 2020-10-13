@@ -6,7 +6,22 @@
 // loop if return false; violation instant return false
 int IsPalindrome(char *word)
 {
+	// get length of word first
+	int j = 0;
+	while (word[j] != '\0') {
+		j++;
+	}
 
+	int i = 0;
+	while (word[i] != '\0' && i < j) {
+		if (word[i] != word[j-1]) {
+			return 0;
+		} else {
+			i++;
+			j--; 
+		}
+	}
+	return 1;
 }
 
 // EXERCISE 2
@@ -15,7 +30,18 @@ int IsPalindrome(char *word)
 // Make sure there is a space ' ' before the char i-1
 void Capitalise(char *phrase)
 {
-
+	int i = 0;
+	while (phrase[i] != '\0') {
+		if (phrase[i] >= 'a' && phrase[i] <= 'z') {
+			if (i == 0) {
+				phrase[i] = phrase[i] - 32;
+			}
+			else if (i > 0 && phrase[i - 1] == ' ') {
+				phrase[i] = phrase[i] - 32;
+			}
+		}
+		i++;
+	}
 }
 
 // EXERCISE 3
@@ -24,7 +50,24 @@ void Capitalise(char *phrase)
 // find the violation to imediate false
 int WordMatchesPattern(char *word, char *pattern)
 {
-
+	int i = 0;
+	while (word[i] != '\0') {
+		i++;
+	}
+	int j = 0;
+	while (pattern[j] != '\0') {
+		j++;
+	}
+	if (i != j) {
+		return 0;
+	} else {
+		for (int k = 0; k < i; k++) {
+			if (pattern[k] != '-' && word[k] != pattern[k]) {
+				return 0;
+			}
+		}
+		return 1;
+	}
 }
 
 /**************************************************************************************
@@ -36,7 +79,7 @@ any changes to the following code.
 int main(void)
 {
 
-	char word1[100] = "noon";
+	char word1[100] = "tenet";
 	char word2[100] = "not";
 
 	printf("EXERCISE 1\n");
@@ -47,20 +90,27 @@ int main(void)
 	char song[1000] = "god of nations at thy feet";
 	char here[1000] = "The University of Auckland";
 	char also[1000] = "a,b,c      888       d!e!f";
+	char zzz[1000] = "zzzzz";
 
 	Capitalise(song);
 	Capitalise(here);
 	Capitalise(also);
+	Capitalise(zzz);
 
 	printf("%s \n", song);
 	printf("%s \n", here);
 	printf("%s \n", also);
+	printf("%s \n", zzz);
 
 	printf("\n\nEXERCISE 3\n");
 
 	char word[100] = "apple";
 	char pattern[100] = "a-p-e";
-	printf("%d", WordMatchesPattern(word, pattern));
+	printf("%d ", WordMatchesPattern(word, pattern));
+
+	char worda[100] = "helps";
+	char patterna[100] = "hell-";
+	printf("%d ", WordMatchesPattern(worda, patterna));
 
 	return 0;
 }
