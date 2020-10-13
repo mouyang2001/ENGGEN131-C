@@ -68,40 +68,183 @@ double PercentUsed(int road[NUM_ROWS][NUM_COLS])
 
 void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 {
+	// find the highest character
+	char highestLetter = 'A' - 1;
+	for (int i = 0; i < NUM_ROWS; i++) {
+		for (int j = 0; j < NUM_COLS; j++) {
+			if (road[i][j] >= 'A' && road[i][j] <= 'Z' && road[i][j] > highestLetter) {
+				highestLetter = road[i][j];
+			} 
+		}
+	}
+
+	// check if horizontal or vertical placement
 	int impossible = 0;
 	if (size < 0) {
+		// check for space
 		for (int i = row; i < row - size; i++) {
-			if (road[i][col] >= 'A' && road[i][col] <= 'Z') {
+			if (road[i][col] != SPACE) {
 				impossible = 1;
 			}
 		}
+
+		// if possible place car
 		if (impossible == 0) {
 			for (int i = row; i < row - size; i++) {
-				road[i][col] = 'A';
+				road[i][col] = highestLetter + 1;
 			}
 		} 
 	} else if (size > 0) {
+		// check for space
 		for (int j = col; j < col + size; j++) {
-			if (road[row][j] >= 'A' && road[row][j] <= 'Z') {
+			if (road[row][j] != SPACE) {
 				impossible = 1;
 			}	
 		}
+
+		// if possible place car
 		if (impossible == 0) {
 			for (int j = col; j < col + size; j++) {
-				road[row][j] = 'A';
+				road[row][j] = highestLetter + 1;
 			}
 		}
 	}
 	
 }
 
-//void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colStart, int *rowEnd, int *colEnd)
-//{
-//}
+void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colStart, int *rowEnd, int *colEnd)
+{
+	// find starting position
+	int startFound = 0;
+	for (int i = 0; i < NUM_ROWS; i++) {
+		for (int j = 0; j < NUM_COLS; j++) {
+			if (road[i][j] == move && startFound == 0) {
+				*rowStart = i;
+				*colStart = j;
+				startFound = 1;
+				break;
+			}
+		}
+		if (startFound == 1) {
+			break;
+		}
+	}
 
-//int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
-//{
-//}
+	// find end position first by checking right or down
+	int i = 1; int j = 1;
+	while (road[*rowStart+i][*colStart] == move)
+	{
+		i++;
+	}
+	while (road[*rowStart][*colStart+j] == move)
+	{
+		j++;
+	}
+
+	if (i > j) {
+		*colEnd = *colStart;
+		*rowEnd = *rowStart + i - 1;
+	} else {
+		*rowEnd = *rowStart;
+		*colEnd = *colStart + j - 1;
+	}
+}
+
+int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
+{
+	int finished = 0;
+	if (r0 == r1) {
+		// horizontal
+		int i = 1;
+		int j = 1;
+		while (road[r0][c0 - i] == SPACE)
+		{
+			i++;
+		}
+		while (road[r1][c1 + j] == SPACE)
+		{
+			j++;
+		}
+
+		if (i - 1 > 0)
+		{
+			for (int k = c0; k <= c1; k++)
+			{
+				road[r0][k - i + 1] = road[r0][k];
+				road[r0][k] = SPACE;
+			}
+
+			if (road[r0][c0 - i] == EXIT)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		else
+		{
+			for (int k = c1; k >= c0; k--)
+			{
+				road[r0][k + j - 1] = road[r0][k];
+				road[r0][k] = SPACE;
+			}
+
+			if (road[r0][c1 + j] == EXIT)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+		
+	} else if (c0 == c1) {
+		//vertical
+		int i = 1;
+		int j = 1;
+		while (road[r0-i][c0] == SPACE)
+		{
+			i++;
+		}
+		while (road[r1+j][c1] == SPACE)
+		{
+			j++;
+		}
+
+		if (i - 1 > 0) {
+			for (int k = r0; k <= r1; k++) {
+				road[k-i+1][c0] = road[k][c0];
+				road[k][c0] = SPACE;
+			}
+
+			if (road[r0 - i][c0] == EXIT)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		} else {
+			for (int k = r1; k >= r0; k--)
+			{
+				road[k + j - 1][c0] = road[k][c0];
+				road[k][c0] = SPACE;
+			}
+			if (road[r1 + j][c0] == EXIT)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
+	}
+}	
 
 
 /***********************************************************/
@@ -109,6 +252,40 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 /******* A SIMPLE MAIN FUNCTION TO TEST YOUR PROGRESS ******/
 /***********************************************************/
 /***********************************************************/
+
+void final(void) {
+	int road[NUM_ROWS][NUM_COLS];
+
+	int rowA, colA, rowB, colB;
+	int result;
+
+	InitialiseRoad(road, 'E', 3);
+	AddCar(road, 3, 1, 2);
+	AddCar(road, 3, 4, -3);
+	printf("\nTask 6\n");
+	PrintRoad(road);
+
+	// Move car B
+	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+
+	PrintRoad(road);
+
+	// Move car B
+	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+	
+	PrintRoad(road);
+
+	// Move car A
+	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+
+	PrintRoad(road);
+}
 
 /* You should add your own tests in here */
 int main(void)
@@ -133,5 +310,18 @@ int main(void)
 	PrintRoad(road);
 	printf("Percent used: %f\n", PercentUsed(road));
 
+	// Task 5
+	int rowA, colA, rowB, colB;
+	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
+	printf("Car A is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
+	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
+	printf("Car B is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
+	FindCar(road, 'C', &rowA, &colA, &rowB, &colB);
+	printf("Car C is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
+
+	// Task 6
+	final();
+
+	
 	return 0;
 }
