@@ -15,7 +15,7 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 		for (int j = 0; j < NUM_COLS; j++) {
 			if (i == 0 || i == NUM_ROWS - 1 || j == 0 || j == NUM_COLS - 1) {
 				road[i][j] = WALL;
-			} else  {
+			} else {
 				road[i][j] = SPACE;
 			}
 		}
@@ -28,16 +28,15 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 		road[pos][NUM_COLS - 1] = EXIT;
 	} else if (side == 'W') {
 		road[pos][0] = EXIT;
-	} else if (side == 'S') {
+	} else {
 		road[NUM_ROWS - 1][pos] = EXIT;
 	}
 }
 
 void PrintRoad(int road[NUM_ROWS][NUM_COLS])
 {
-	int i, j;
-	for (i = 0; i < NUM_ROWS; i++) {
-		for (j = 0; j < NUM_COLS; j++) {
+	for (int i = 0; i < NUM_ROWS; i++) {
+		for (int j = 0; j < NUM_COLS; j++) {
 			if (road[i][j] == WALL) {
 				printf("%c", '#');
 			} else if (road[i][j] == SPACE) {
@@ -54,16 +53,16 @@ void PrintRoad(int road[NUM_ROWS][NUM_COLS])
 
 double PercentUsed(int road[NUM_ROWS][NUM_COLS])
 {
-	int availableSpace = 0;
-	for (int i = 0; i < NUM_ROWS; i++) {
-		for (int j = 0; j < NUM_COLS; j++) {
-			if (road[i][j] == SPACE) {
-				availableSpace++;
+	int occupied = 0;
+	for (int i = 1; i < NUM_ROWS - 1; i++) {
+		for (int j = 1; j < NUM_COLS - 1; j++) {
+			if (road[i][j] != SPACE) {
+				occupied++;
 			}
 		}
 	}
-	int totalSpace = (NUM_ROWS-2) * (NUM_COLS - 2);
-	return ((double) (totalSpace - availableSpace) / totalSpace) * 100;
+	int totalSpace = (NUM_ROWS - 2) * (NUM_COLS - 2);
+	return ((double) occupied / totalSpace) * 100;
 }
 
 void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
@@ -253,7 +252,51 @@ int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
 /***********************************************************/
 /***********************************************************/
 
-void final(void) {
+void task1(void) {
+	int road[NUM_ROWS][NUM_COLS];
+	InitialiseRoad(road, 'E', 3);
+}
+
+void task2(void) {
+	int road[NUM_ROWS][NUM_COLS];
+	InitialiseRoad(road, 'E', 3);
+
+	PrintRoad(road);
+}
+
+void task3(void) {
+	int road[NUM_ROWS][NUM_COLS];
+	InitialiseRoad(road, 'E', 3);
+
+	PrintRoad(road);
+	printf("Percent used: %f\n", PercentUsed(road));
+}
+
+void task4(void) {
+	int road[NUM_ROWS][NUM_COLS];
+
+	InitialiseRoad(road, 'E', 3);
+	AddCar(road, 3, 1, 2);
+	AddCar(road, 2, 4, -4);
+	AddCar(road, 5, 3, 3);
+	AddCar(road, 6, 3, 3);
+	PrintRoad(road);
+	printf("Percent used: %f\n", PercentUsed(road));
+}
+
+void task5(void) {
+	int road[NUM_ROWS][NUM_COLS];
+	int rowA, colA, rowB, colB;
+	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
+	printf("Car A is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
+	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
+	printf("Car B is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
+	FindCar(road, 'C', &rowA, &colA, &rowB, &colB);
+	printf("Car C is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
+}
+
+void task6(void)
+{
 	int road[NUM_ROWS][NUM_COLS];
 
 	int rowA, colA, rowB, colB;
@@ -276,7 +319,7 @@ void final(void) {
 	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
 	result = MoveCar(road, rowA, colA, rowB, colB);
 	printf("Result = %d\n", result);
-	
+
 	PrintRoad(road);
 
 	// Move car A
@@ -290,38 +333,7 @@ void final(void) {
 /* You should add your own tests in here */
 int main(void)
 {
-	int road[NUM_ROWS][NUM_COLS];
-
-	// Task 1
-	InitialiseRoad(road, 'E', 3);
-
-	// Task 2
-	PrintRoad(road);
-	
-	// Task 3
-	printf("Percent used: %f\n", PercentUsed(road));
-
-	// Task 4
-	InitialiseRoad(road, 'E', 3);
-	AddCar(road, 3, 1, 2);
-	AddCar(road, 2, 4, -4);
-	AddCar(road, 5, 3, 3);
-	AddCar(road, 6, 3, 3);
-	PrintRoad(road);
-	printf("Percent used: %f\n", PercentUsed(road));
-
-	// Task 5
-	int rowA, colA, rowB, colB;
-	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
-	printf("Car A is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
-	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
-	printf("Car B is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
-	FindCar(road, 'C', &rowA, &colA, &rowB, &colB);
-	printf("Car C is at: (%d, %d) - (%d, %d)\n", rowA, colA, rowB, colB);
-
-	// Task 6
-	final();
-
+	task4();
 	
 	return 0;
 }
