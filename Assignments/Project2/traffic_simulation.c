@@ -47,7 +47,7 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 	{
 		road[pos][0] = EXIT;
 	}
-	else if (side == 'S')
+	else
 	{
 		road[NUM_ROWS - 1][pos] = EXIT;
 	}
@@ -55,10 +55,9 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 
 void PrintRoad(int road[NUM_ROWS][NUM_COLS])
 {
-	int i, j;
-	for (i = 0; i < NUM_ROWS; i++)
+	for (int i = 0; i < NUM_ROWS; i++)
 	{
-		for (j = 0; j < NUM_COLS; j++)
+		for (int j = 0; j < NUM_COLS; j++)
 		{
 			if (road[i][j] == WALL)
 			{
@@ -83,28 +82,29 @@ void PrintRoad(int road[NUM_ROWS][NUM_COLS])
 
 double PercentUsed(int road[NUM_ROWS][NUM_COLS])
 {
-	int availableSpace = 0;
-	for (int i = 0; i < NUM_ROWS; i++)
+	int occupiedCount = 0;
+	for (int i = 1; i < NUM_ROWS - 1; i++)
 	{
-		for (int j = 0; j < NUM_COLS; j++)
+		for (int j = 1; j < NUM_COLS - 1; j++)
 		{
-			if (road[i][j] == SPACE)
+			if (road[i][j] != SPACE)
 			{
-				availableSpace++;
+				occupiedCount++;
 			}
 		}
 	}
+
 	int totalSpace = (NUM_ROWS - 2) * (NUM_COLS - 2);
-	return ((double)(totalSpace - availableSpace) / totalSpace) * 100;
+	return ((double)occupiedCount / totalSpace) * 100;
 }
 
 void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 {
 	// find the highest character
 	char highestLetter = 'A' - 1;
-	for (int i = 0; i < NUM_ROWS; i++)
+	for (int i = 1; i < NUM_ROWS - 1; i++)
 	{
-		for (int j = 0; j < NUM_COLS; j++)
+		for (int j = 1; j < NUM_COLS - 1; j++)
 		{
 			if (road[i][j] >= 'A' && road[i][j] <= 'Z' && road[i][j] > highestLetter)
 			{
@@ -114,7 +114,6 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 	}
 
 	// check if horizontal or vertical placement
-	int impossible = 0;
 	if (size < 0)
 	{
 		// check for space
@@ -122,17 +121,14 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 		{
 			if (road[i][col] != SPACE)
 			{
-				impossible = 1;
+				return;
 			}
 		}
 
 		// if possible place car
-		if (impossible == 0)
+		for (int i = row; i < row - size; i++)
 		{
-			for (int i = row; i < row - size; i++)
-			{
-				road[i][col] = highestLetter + 1;
-			}
+			road[i][col] = highestLetter + 1;
 		}
 	}
 	else if (size > 0)
@@ -142,17 +138,14 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 		{
 			if (road[row][j] != SPACE)
 			{
-				impossible = 1;
+				return;
 			}
 		}
 
 		// if possible place car
-		if (impossible == 0)
+		for (int j = col; j < col + size; j++)
 		{
-			for (int j = col; j < col + size; j++)
-			{
-				road[row][j] = highestLetter + 1;
-			}
+			road[row][j] = highestLetter + 1;
 		}
 	}
 }
@@ -161,9 +154,9 @@ void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colSta
 {
 	// find starting position
 	int startFound = 0;
-	for (int i = 0; i < NUM_ROWS; i++)
+	for (int i = 1; i < NUM_ROWS - 1; i++)
 	{
-		for (int j = 0; j < NUM_COLS; j++)
+		for (int j = 1; j < NUM_COLS - 1; j++)
 		{
 			if (road[i][j] == move && startFound == 0)
 			{
@@ -179,27 +172,29 @@ void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colSta
 		}
 	}
 
-	// find end position first by checking right or down
-	int i = 1;
-	int j = 1;
-	while (road[*rowStart + i][*colStart] == move)
+	// check if horizontal or vertical
+	if (road[*rowStart + 1][*colStart] == move)
 	{
-		i++;
-	}
-	while (road[*rowStart][*colStart + j] == move)
-	{
-		j++;
-	}
+		// count distance to end
+		int dist = 0;
+		while (road[*rowStart + dist + 1][*colStart] == move)
+		{
+			dist++;
+		}
 
-	if (i > j)
-	{
+		*rowEnd = *rowStart + dist;
 		*colEnd = *colStart;
-		*rowEnd = *rowStart + i - 1;
 	}
 	else
 	{
+		int dist = 0;
+		while (road[*rowStart][*colStart + dist + 1] == move)
+		{
+			dist++;
+		}
+
 		*rowEnd = *rowStart;
-		*colEnd = *colStart + j - 1;
+		*colEnd = *colStart + dist;
 	}
 }
 
@@ -208,101 +203,93 @@ int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
 	int finished = 0;
 	if (r0 == r1)
 	{
-		// horizontal
-		int i = 1;
-		int j = 1;
-		while (road[r0][c0 - i] == SPACE)
-		{
-			i++;
-		}
-		while (road[r1][c1 + j] == SPACE)
-		{
-			j++;
-		}
+		// therefore horizontal
 
-		if (i - 1 > 0)
+		// move left or right
+		if (road[r0][c0 - 1] == SPACE)
 		{
+			int dist = 0;
+			while (road[r0][c0 - dist - 1] == SPACE)
+			{
+				dist++;
+			}
+
 			for (int k = c0; k <= c1; k++)
 			{
-				road[r0][k - i + 1] = road[r0][k];
+				road[r0][k - dist] = road[r0][k];
 				road[r0][k] = SPACE;
 			}
 
-			if (road[r0][c0 - i] == EXIT)
+			if (road[r0][c0 - dist - 1] == EXIT)
 			{
 				return 1;
-			}
-			else
-			{
-				return 0;
 			}
 		}
 		else
 		{
+			int dist = 0;
+			while (road[r1][c1 + dist + 1] == SPACE)
+			{
+				dist++;
+			}
+
 			for (int k = c1; k >= c0; k--)
 			{
-				road[r0][k + j - 1] = road[r0][k];
+				road[r0][k + dist] = road[r0][k];
 				road[r0][k] = SPACE;
 			}
 
-			if (road[r0][c1 + j] == EXIT)
+			if (road[r0][c1 + dist + 1] == EXIT)
 			{
 				return 1;
-			}
-			else
-			{
-				return 0;
 			}
 		}
 	}
 	else if (c0 == c1)
 	{
-		//vertical
-		int i = 1;
-		int j = 1;
-		while (road[r0 - i][c0] == SPACE)
-		{
-			i++;
-		}
-		while (road[r1 + j][c1] == SPACE)
-		{
-			j++;
-		}
+		// therefore vertical
 
-		if (i - 1 > 0)
+		// move up or down
+		if (road[r0 - 1][c0] == SPACE)
 		{
+			int dist = 0;
+			while (road[r0 - dist - 1][c0] == SPACE)
+			{
+				dist++;
+			}
+
 			for (int k = r0; k <= r1; k++)
 			{
-				road[k - i + 1][c0] = road[k][c0];
+				road[k - dist][c0] = road[k][c0];
 				road[k][c0] = SPACE;
 			}
 
-			if (road[r0 - i][c0] == EXIT)
+			if (road[r0 - dist - 1][c0] == EXIT)
 			{
 				return 1;
-			}
-			else
-			{
-				return 0;
 			}
 		}
 		else
 		{
+			int dist = 0;
+			while (road[r1 + dist + 1][c1] == SPACE)
+			{
+				dist++;
+			}
+
 			for (int k = r1; k >= r0; k--)
 			{
-				road[k + j - 1][c0] = road[k][c0];
+				road[k + dist][c0] = road[k][c0];
 				road[k][c0] = SPACE;
 			}
-			if (road[r1 + j][c0] == EXIT)
+
+			if (road[r1 + dist + 1][c0] == EXIT)
 			{
 				return 1;
 			}
-			else
-			{
-				return 0;
-			}
 		}
 	}
+	return 0;
 }
 
 /***********************************************************/
