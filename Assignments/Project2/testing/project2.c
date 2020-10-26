@@ -118,7 +118,6 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 
 void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colStart, int *rowEnd, int *colEnd)
 {
-	// find starting position
 	int startFound = 0;
 	for (int i = 1; i < NUM_ROWS-1; i++) {
 		for (int j = 1; j < NUM_COLS-1; j++) {
@@ -126,29 +125,12 @@ void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colSta
 				*rowStart = i;
 				*colStart = j;
 				startFound = 1;
-				break;
+			}
+			else if (road[i][j] == move) {
+				*rowEnd = i;
+				*colEnd = j;
 			}
 		}
-		if (startFound == 1) {
-			break;
-		}
-	}
-
-	// check if horizontal or vertical
-	if (road[*rowStart + 1][*colStart] == move) {
-		// count distance to end
-		int dist = 0;
-		while (road[*rowStart + dist + 1][*colStart] == move) { dist++; }
-
-		*rowEnd = *rowStart + dist;
-		*colEnd = *colStart;
-	} 
-	else {
-		int dist = 0;
-		while (road[*rowStart][*colStart + dist + 1] == move) { dist++; }
-
-		*rowEnd = *rowStart;
-		*colEnd = *colStart + dist;
 	}
 }
 
@@ -343,7 +325,8 @@ void task7(void) {
 /* You should add your own tests in here */
 int main(void)
 {
-	task6();
+	task5();
+	task5Extra();
 	
 	return 0;
 }
