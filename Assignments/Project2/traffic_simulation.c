@@ -16,6 +16,14 @@
 
 // Your function definitions should go here...
 
+// InitialiseRoad function generates the game board within road array
+// Inputs:
+// (int) road[NUM_ROWS][NUM_COLS], empty array size NUM_ROWS by NUM_COlS
+// (char) side, ('N', 'E', 'W', 'S') north, east, west or south direction of exit
+// (int) pos, rows down from top or columns across from left where exit should be.
+// Ouput: (void)
+// Author: Matthew Ouyang
+
 void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 {
 	// build walls and spaces
@@ -23,6 +31,8 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 	{
 		for (int j = 0; j < NUM_COLS; j++)
 		{
+			// outer most layer will be the WALL
+			// everything within will be the SPACE
 			if (i == 0 || i == NUM_ROWS - 1 || j == 0 || j == NUM_COLS - 1)
 			{
 				road[i][j] = WALL;
@@ -34,7 +44,7 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 		}
 	}
 
-	// add exit
+	// add the exit depending on side
 	if (side == 'N')
 	{
 		road[0][pos] = EXIT;
@@ -53,8 +63,14 @@ void InitialiseRoad(int road[NUM_ROWS][NUM_COLS], char side, int pos)
 	}
 }
 
+// PrintRoad function outputs the game board into console
+// Input: (int) road[NUM_ROWS][NUM_COLS], populated array of game components
+// Ouput: (void)
+// Author: Matthew Ouyang
+
 void PrintRoad(int road[NUM_ROWS][NUM_COLS])
 {
+	// scan through road, and print out tiles depending on what it is
 	for (int i = 0; i < NUM_ROWS; i++)
 	{
 		for (int j = 0; j < NUM_COLS; j++)
@@ -76,12 +92,19 @@ void PrintRoad(int road[NUM_ROWS][NUM_COLS])
 				printf("%c", road[i][j]);
 			}
 		}
+		// start of new row
 		printf("\n");
 	}
 }
 
+// PercentUsed function calculates the percentage of space occupied
+// Input: (int) road[NUM_ROWS][NUM_COLS], populated array of game components
+// Output: (double) percentage of space occupied
+// Author: Matthew Ouyang
+
 double PercentUsed(int road[NUM_ROWS][NUM_COLS])
 {
+	// scan through road array and count number of occupied space
 	int occupiedCount = 0;
 	for (int i = 1; i < NUM_ROWS - 1; i++)
 	{
@@ -94,13 +117,26 @@ double PercentUsed(int road[NUM_ROWS][NUM_COLS])
 		}
 	}
 
+	// calculate the total possible space
 	int totalSpace = (NUM_ROWS - 2) * (NUM_COLS - 2);
+
+	// return percentage of space used
 	return ((double)occupiedCount / totalSpace) * 100;
 }
 
+// AddCar function places car tiles into the road array if possible
+// Inputs:
+// (int) road[NUM_ROWS][NUM_COLS], populated array of game components
+// (int) row, starting row position of car
+// (int) col, starting column position of car
+// (int) size, number of spaces the car occupies, positive means horizontal
+// and negative vertical
+// Output: (void)
+// Author: Matthew Ouyang
+
 void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 {
-	// find the highest character
+	// find the highest character currently in road array
 	char highestLetter = 'A' - 1;
 	for (int i = 1; i < NUM_ROWS - 1; i++)
 	{
@@ -113,10 +149,10 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 		}
 	}
 
-	// check if horizontal or vertical placement
+	// check orientation
 	if (size < 0)
 	{
-		// check for space
+		// vertical, check for space, if not possible just return
 		for (int i = row; i < row - size; i++)
 		{
 			if (road[i][col] != SPACE)
@@ -125,7 +161,7 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 			}
 		}
 
-		// if possible place car
+		// if possible place the car
 		for (int i = row; i < row - size; i++)
 		{
 			road[i][col] = highestLetter + 1;
@@ -133,7 +169,7 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 	}
 	else if (size > 0)
 	{
-		// check for space
+		// horizontal, check for space, if not possible just return
 		for (int j = col; j < col + size; j++)
 		{
 			if (road[row][j] != SPACE)
@@ -142,7 +178,7 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 			}
 		}
 
-		// if possible place car
+		// if possible place the car
 		for (int j = col; j < col + size; j++)
 		{
 			road[row][j] = highestLetter + 1;
@@ -150,19 +186,33 @@ void AddCar(int road[NUM_ROWS][NUM_COLS], int row, int col, int size)
 	}
 }
 
+// FindCar function searches for a specific car's location in road array
+// Inputs:
+// (int) road[NUM_ROWS][NUM_COLS], populated array of game components
+// (char) move, alphabetical character of car we want to find
+// (int) rowStart, pointer for starting row of car
+// (int) colStart, pointer for starting column of car
+// (int) rowEnd, pointer for row end of car
+// (int) colEnd, pointer for column end of car
+// Output: (void)
+// Author: Matthew Ouyang
+
 void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colStart, int *rowEnd, int *colEnd)
 {
+	// look through road array
 	int startFound = 0;
 	for (int i = 1; i < NUM_ROWS - 1; i++)
 	{
 		for (int j = 1; j < NUM_COLS - 1; j++)
 		{
+			// first occurence of the car will be it's start position
 			if (road[i][j] == move && startFound == 0)
 			{
 				*rowStart = i;
 				*colStart = j;
 				startFound = 1;
 			}
+			// final occurence of car will be it's end position
 			else if (road[i][j] == move)
 			{
 				*rowEnd = i;
@@ -172,48 +222,51 @@ void FindCar(int road[NUM_ROWS][NUM_COLS], char move, int *rowStart, int *colSta
 	}
 }
 
+// MoveCar function moves a specified car back and forth and checks if exit reached
+// Inputs:
+// (int) road[NUM_ROWS][NUM_COLS], populated array of game components
+// (int) r0, starting row of car
+// (int) c0, starting column of car
+// (int) r1, row end of car
+// (int) c1, column end of car
+// Output: (int) 1 if exit reached, else 0 if exit not reached
+// Author: Matthew Ouyang
+
 int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
 {
-	int finished = 0;
+	// check orientation
 	if (r0 == r1)
 	{
 		// therefore horizontal
-
-		// move left or right
+		// check if it can move left or right
+		// prioritise left first
 		if (road[r0][c0 - 1] == SPACE)
 		{
-			int dist = 0;
-			while (road[r0][c0 - dist - 1] == SPACE)
+			// move car left
+			int i = 1;
+			for (i; road[r0][c0 - i] == SPACE; i++)
 			{
-				dist++;
+				road[r0][c0 - i] = road[r0][c1 - (i - 1)];
+				road[r0][c1 - (i - 1)] = SPACE;
 			}
 
-			for (int k = c0; k <= c1; k++)
-			{
-				road[r0][k - dist] = road[r0][k];
-				road[r0][k] = SPACE;
-			}
-
-			if (road[r0][c0 - dist - 1] == EXIT)
+			// check if it bumped an exit
+			if (road[r0][c0 - i] == EXIT)
 			{
 				return 1;
 			}
 		}
 		else
 		{
-			int dist = 0;
-			while (road[r1][c1 + dist + 1] == SPACE)
+			// move car right
+			int i = 1;
+			for (i; road[r0][c1 + i] == SPACE; i++)
 			{
-				dist++;
+				road[r0][c1 + i] = road[r0][c0 + (i - 1)];
+				road[r0][c0 + (i - 1)] = SPACE;
 			}
-
-			for (int k = c1; k >= c0; k--)
-			{
-				road[r0][k + dist] = road[r0][k];
-				road[r0][k] = SPACE;
-			}
-
-			if (road[r0][c1 + dist + 1] == EXIT)
+			// check if it bumped an exit
+			if (road[r0][c1 + i] == EXIT)
 			{
 				return 1;
 			}
@@ -222,47 +275,42 @@ int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
 	else if (c0 == c1)
 	{
 		// therefore vertical
-
-		// move up or down
+		// check if it can move up or down
+		// prioritise up first
 		if (road[r0 - 1][c0] == SPACE)
 		{
-			int dist = 0;
-			while (road[r0 - dist - 1][c0] == SPACE)
+			// move car up
+			int i = 1;
+			for (i; road[r0 - i][c0] == SPACE; i++)
 			{
-				dist++;
+				road[r0 - i][c0] = road[r1 - (i - 1)][c0];
+				road[r1 - (i - 1)][c0] = SPACE;
 			}
 
-			for (int k = r0; k <= r1; k++)
-			{
-				road[k - dist][c0] = road[k][c0];
-				road[k][c0] = SPACE;
-			}
-
-			if (road[r0 - dist - 1][c0] == EXIT)
+			// check if it bumped an exit
+			if (road[r0 - i][c0] == EXIT)
 			{
 				return 1;
 			}
 		}
 		else
 		{
-			int dist = 0;
-			while (road[r1 + dist + 1][c1] == SPACE)
+			// move car down
+			int i = 1;
+			for (i; road[r1 + i][c0] == SPACE; i++)
 			{
-				dist++;
+				road[r1 + i][c0] = road[r0 + (i - 1)][c0];
+				road[r0 + (i - 1)][c0] = SPACE;
 			}
 
-			for (int k = r1; k >= r0; k--)
-			{
-				road[k + dist][c0] = road[k][c0];
-				road[k][c0] = SPACE;
-			}
-
-			if (road[r1 + dist + 1][c0] == EXIT)
+			// check if it bumped an exit
+			if (road[r1 + i][c0] == EXIT)
 			{
 				return 1;
 			}
 		}
 	}
+
 	return 0;
 }
 

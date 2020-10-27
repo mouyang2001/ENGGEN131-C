@@ -1,8 +1,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 
-#define NUM_ROWS 8
-#define NUM_COLS 8
+#define NUM_ROWS 7
+#define NUM_COLS 18
 
 #define SPACE 0
 #define WALL -1
@@ -200,68 +200,58 @@ int MoveCar(int road[NUM_ROWS][NUM_COLS], int r0, int c0, int r1, int c1)
 		// check if it can move left or right
 		// prioritise left first
 		if (road[r0][c0 - 1] == SPACE) {
-			// calculte distance it can move
-			int dist = 0;
-			while (road[r0][c0 - dist - 1] == SPACE) { dist++; }
-
-			// move car by that distance
-			for (int k = c0; k <= c1; k++) {
-				road[r0][k - dist] = road[r0][k];
-				road[r0][k] = SPACE;
+			// move car left
+			int i = 1;
+			for (i = 1; road[r0][c0 - i] == SPACE; i++) {
+				road[r0][c0 - i] = road[r0][c1 - (i - 1)];
+				road[r0][c1 - (i - 1)] = SPACE;
 			}
-			
+
 			// check if it bumped an exit
-			if (road[r0][c0 - dist - 1] == EXIT) { return 1; }
+			if (road[r0][c0 - i] == EXIT) { return 1; }
 		}
 		else {
-			// calculte distance it can move
-			int dist = 0;
-			while (road[r1][c1 + dist + 1] == SPACE) { dist++; }
-
-			// move car by that distance
-			for (int k = c1; k >= c0; k--) {
-				road[r0][k + dist] = road[r0][k];
-				road[r0][k] = SPACE;
+			// move car right
+			int i = 1;
+			for (i = 1; road[r0][c1 + i] == SPACE; i++)
+			{
+				road[r0][c1 + i] = road[r0][c0 + (i - 1)];
+				road[r0][c0 + (i - 1)] = SPACE;
 			}
-
 			// check if it bumped an exit
-			if (road[r0][c1 + dist + 1] == EXIT) { return 1; }
+			if (road[r0][c1 + i] == EXIT) { return 1; }
 		}
 	} else if (c0 == c1) {
 		// therefore vertical
 		// check if it can move up or down
 		// prioritise up first
 		if (road[r0 - 1][c0] == SPACE) {
-			// calculte distance it can move
-			int dist = 0;
-			while (road[r0 - dist - 1][c0] == SPACE) { dist++; }
-
-			// move car by that distance
-			for (int k = r0; k <= r1; k++) {
-				road[k - dist][c0] = road[k][c0];
-				road[k][c0] = SPACE;
+			// move car up
+			int i = 1;
+			for (i = 1; road[r0 - i][c0] == SPACE; i++)
+			{
+				road[r0 - i][c0] = road[r1 - (i - 1)][c0];
+				road[r1 - (i - 1)][c0] = SPACE;
 			}
 
 			// check if it bumped an exit
-			if (road[r0 - dist - 1][c0] == EXIT) { return 1; }
+			if (road[r0 - i][c0] == EXIT) { return 1; }
 		}
 		else {
-			// calculte distance it can move
-			int dist = 0;
-			while (road[r1 + dist + 1][c1] == SPACE) { dist++; }
-
-			// move car by that distance
-			for (int k = r1; k >= r0; k--) {
-				road[k + dist][c0] = road[k][c0];
-				road[k][c0] = SPACE;
+			// move car down
+			int i = 1;
+			for (i = 1; road[r1 + i][c0] == SPACE; i++)
+			{
+				road[r1 + i][c0] = road[r0 + (i - 1)][c0];
+				road[r0 + (i - 1)][c0] = SPACE;
 			}
 
 			// check if it bumped an exit
-			if (road[r1 + dist + 1][c0] == EXIT) { return 1; }
+			if (road[r1 + i][c0] == EXIT) { return 1; }
 		}
 	}
-
-	// default to 0 if exit not reached
+	
+	// if no exit found return 0
 	return 0;
 }	
 
@@ -360,21 +350,21 @@ void task6(void)
 
 	PrintRoad(road);
 
-	// Move car B
+	// Move car 
 	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
 	result = MoveCar(road, rowA, colA, rowB, colB);
 	printf("Result = %d\n", result);
 
 	PrintRoad(road);
 
-	// Move car B
+	// Move car 
 	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
 	result = MoveCar(road, rowA, colA, rowB, colB);
 	printf("Result = %d\n", result);
 
 	PrintRoad(road);
 
-	// Move car A
+	// Move car 
 	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
 	result = MoveCar(road, rowA, colA, rowB, colB);
 	printf("Result = %d\n", result);
@@ -385,10 +375,39 @@ void task6(void)
 void task7(void) {
 	// change numRows: 7 numCols: 18
 	int road[NUM_ROWS][NUM_COLS];
+
+	int rowA, colA, rowB, colB;
+	int result;
 	InitialiseRoad(road, 'S', 6);
 	AddCar(road, 2, 6, -3);
 	AddCar(road, 4, 14, -2);
 	AddCar(road, 5, 3, 9);
+	PrintRoad(road);
+
+	// Move car
+	FindCar(road, 'B', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+	PrintRoad(road);
+	// Move car
+	FindCar(road, 'C', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+	PrintRoad(road);
+	// Move car
+	FindCar(road, 'C', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+	PrintRoad(road);
+	// Move car
+	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
+	PrintRoad(road);
+	// Move car
+	FindCar(road, 'A', &rowA, &colA, &rowB, &colB);
+	result = MoveCar(road, rowA, colA, rowB, colB);
+	printf("Result = %d\n", result);
 	PrintRoad(road);
 }
 
@@ -396,7 +415,7 @@ void task7(void) {
 /* You should add your own tests in here */
 int main(void)
 {
-	task6();
+	task7();
 	
 	return 0;
 }
