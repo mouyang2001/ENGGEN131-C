@@ -24,12 +24,21 @@ int main(void)
 	}
 
 	// Some basic art...
-	DrawLine(280, 280, 320, 320, 0, 0, 0);
-	DrawLine(280, 320, 320, 280, 0, 0, 0);
-	FillCircle(300, 260, 20, 0, 0, 255);
-	DrawSquare(260, 300, 20, 255, 0, 0);
-	FillSquare(340, 300, 20, 0, 255, 0);
-	DrawCircle(300, 340, 20, 255, 0, 0);
+	// DrawLine(280, 280, 320, 320, 0, 0, 0);
+	// DrawLine(280, 320, 320, 280, 0, 0, 0);
+	// FillCircle(300, 260, 20, 0, 0, 255);
+	// DrawSquare(260, 300, 20, 255, 0, 0);
+	// FillSquare(340, 300, 20, 0, 255, 0);
+	// DrawCircle(300, 340, 20, 255, 0, 0);
+	int j;
+	j = 150;
+	for (i = 100; i < 400; i++)
+	{
+		DrawPixel(500 - i, j, 0, 0, 0);
+		// DrawPixel(pixelsDown, pixelsRight, 0, 0, 0);
+		DrawPixel(500, 600 - j, 0, 0, 0);
+		j = j + 1;
+	}
 
 	SaveBMPFile("output.bmp", width, height);
 
