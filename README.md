@@ -2,7 +2,7 @@
 C programming files for my ENGGEN 131 course.
 
 # Capstone project
-Course assignment within: Assignments/Project2/traffic_simulation.exe
+Course capstone project located at: Assignments/Project2/traffic_simulation.exe
 
 Traffic jam game that can be played within the console.
 
